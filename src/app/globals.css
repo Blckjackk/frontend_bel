@@ -1,0 +1,84 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #0D903A;
+  --color-primary-active: #0B7A2F;
+  --color-accent: #FF852D;
+  --color-ink: #000929;
+  --color-muted: #4D546A;
+  --color-muted-soft: #8E95A8;
+  --color-canvas: #F7F7FD;
+  --color-hairline: #E0DEF7;
+  
+  --font-sans: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+@import "swiper/css";
+@import "swiper/css/navigation";
+@import "swiper/css/pagination";
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
+
+html, body {
+  max-width: 100vw;
+  overflow-x: clip; 
+  position: relative;
+  font-family: var(--font-sans);
+  color: var(--color-ink);
+  background-color: var(--color-canvas);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom Scrollbar Hide Utility */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Custom transitions and premium touches */
+.premium-transition {
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.premium-card-hover {
+  transform: translateY(0);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.premium-card-hover:hover {
+  transform: translateY(-4px);
+  border-color: var(--color-primary);
+}
+
+/* Clean up swiper buttons default look for premium aesthetic */
+.swiper-button-prev,
+.swiper-button-next {
+  color: var(--color-ink) !important;
+  background-color: #ffffff;
+  border: 1px solid var(--color-hairline);
+  width: 44px !important;
+  height: 44px !important;
+  border-radius: 9999px;
+  box-shadow: 0 2px 8px rgba(0, 9, 41, 0.04);
+  transition: all 0.2s ease;
+}
+
+.swiper-button-prev:after,
+.swiper-button-next:after {
+  font-size: 16px !important;
+  font-weight: bold;
+}
+
+.swiper-button-prev:hover,
+.swiper-button-next:hover {
+  border-color: var(--color-primary);
+  background-color: var(--color-canvas);
+}
