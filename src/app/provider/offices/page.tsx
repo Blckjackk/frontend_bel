@@ -263,25 +263,24 @@ export default function ProviderOfficesPage() {
 
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
       const token = localStorage.getItem('token');
-      const authHeaders = token ? { 'Authorization': `Bearer ${token}` } : {};
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json'
+      };
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
 
       let response;
       if (editing) {
         response = await fetch(`${apiUrl}/offices/${editing.id}`, {
           method: 'PATCH',
-          headers: { 
-            'Content-Type': 'application/json',
-            ...authHeaders
-          },
+          headers: headers,
           body: JSON.stringify(payload),
         });
       } else {
         response = await fetch(`${apiUrl}/offices`, {
           method: 'POST',
-          headers: { 
-            'Content-Type': 'application/json',
-            ...authHeaders
-          },
+          headers: headers,
           body: JSON.stringify(payload),
         });
       }
@@ -306,11 +305,14 @@ export default function ProviderOfficesPage() {
   const handleToggleFullyBooked = async (office: OfficeSpace) => {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
     const token = localStorage.getItem('token');
-    const authHeaders = token ? { 'Authorization': `Bearer ${token}` } : {};
+    const headers: Record<string, string> = {};
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
     try {
       const res = await fetch(`${apiUrl}/offices/${office.id}/fully-booked`, {
         method: 'PATCH',
-        headers: authHeaders,
+        headers: headers,
       });
       if (res.ok) {
         fetchProviderData();
@@ -328,12 +330,15 @@ export default function ProviderOfficesPage() {
 
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
     const token = localStorage.getItem('token');
-    const authHeaders = token ? { 'Authorization': `Bearer ${token}` } : {};
+    const headers: Record<string, string> = {};
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
 
     try {
       const res = await fetch(`${apiUrl}/offices/${officeId}`, {
         method: 'DELETE',
-        headers: authHeaders,
+        headers: headers,
       });
       if (res.ok) {
         alert('Kantor berhasil dihapus!');

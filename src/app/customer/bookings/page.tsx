@@ -57,7 +57,12 @@ export default function CustomerBookings() {
 
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
     const token = localStorage.getItem('token');
-    const authHeaders = token ? { 'Authorization': `Bearer ${token}` } : {};
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json'
+    };
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
 
     try {
       // 1. Upload proof file via client uploads route
@@ -77,10 +82,7 @@ export default function CustomerBookings() {
       // 2. Submit payment proof path to Koa server
       const paymentRes = await fetch(`${apiUrl}/bookings/${bookingId}/payment`, {
         method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          ...authHeaders
-        },
+        headers: headers,
         body: JSON.stringify({
           payment_proof: imageUrl,
           payment_method: 'Bank Transfer'

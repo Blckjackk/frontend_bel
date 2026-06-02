@@ -66,14 +66,16 @@ export default function ProviderBookingsPage() {
     setUpdatingId(id);
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
     const token = localStorage.getItem('token');
-    const authHeaders = token ? { 'Authorization': `Bearer ${token}` } : {};
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json'
+    };
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
     try {
       const res = await fetch(`${apiUrl}/bookings/${id}/verify`, {
         method: 'PATCH',
-        headers: { 
-          'Content-Type': 'application/json',
-          ...authHeaders
-        },
+        headers: headers,
         body: JSON.stringify({ status: nextStatus }),
       });
 
