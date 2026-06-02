@@ -27,15 +27,16 @@ export default function ProviderDashboard() {
 
   const fetchDashboardData = useCallback(async () => {
     if (!user?.id) return;
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
     try {
       // 1. Fetch provider offices
-      const officeRes = await fetch(`http://localhost:5000/api/offices?provider_id=${user.id}`);
+      const officeRes = await fetch(`${apiUrl}/offices?provider_id=${user.id}`);
       const officesData = await officeRes.json();
       const myOfficeIds = Array.isArray(officesData) ? officesData.map((o: any) => o.id) : [];
       setOfficesCount(myOfficeIds.length);
 
       // 2. Fetch all bookings and filter by provider office IDs
-      const bookingRes = await fetch('http://localhost:5000/api/bookings/all');
+      const bookingRes = await fetch(`${apiUrl}/bookings/all`);
       const allBookings = await bookingRes.json();
 
       if (Array.isArray(allBookings)) {
@@ -59,7 +60,7 @@ export default function ProviderDashboard() {
   const confirmed = bookings.filter((b) => b.status === 'confirmed').length;
   const revenue = bookings
     .filter((b) => b.status === 'confirmed')
-    .reduce((sum, b) => sum + Number(b.price), 0);
+    .reduce((sum, b) => sum + Number(b.price || (b as any).total_amount || 0), 0);
 
   if (loading || !user) {
     return (
@@ -126,7 +127,7 @@ export default function ProviderDashboard() {
                     <td className="py-3 font-semibold text-ink">#{b.booking_trx_id}</td>
                     <td className="py-3 font-medium">{b.office?.name || `Office #${b.office_id}`}</td>
                     <td className="py-3">{b.user?.name ?? `User #${b.user_id}`}</td>
-                    <td className="py-3 font-semibold text-[#FF852D]">Rp {Number(b.price).toLocaleString('id-ID')}</td>
+                    <td className="py-3 font-semibold text-[#FF852D]">Rp {Number(b.price || (b as any).total_amount || 0).toLocaleString('id-ID')}</td>
                     <td className="py-3"><StatusBadge status={b.status} /></td>
                   </tr>
                 ))}

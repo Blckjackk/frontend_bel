@@ -10,9 +10,19 @@ interface StartChatButtonProps {
   officeProviderId: number;
   className?: string;
   label?: string;
+  phoneNumber?: string;
+  contactName?: string;
 }
 
-export function StartChatButton({ officeId, officeTitle, officeProviderId, className, label }: StartChatButtonProps) {
+export function StartChatButton({
+  officeId,
+  officeTitle,
+  officeProviderId,
+  className,
+  label,
+  phoneNumber,
+  contactName,
+}: StartChatButtonProps) {
   const { user, isAuthenticated } = useAuth();
   const router = useRouter();
 
@@ -27,18 +37,14 @@ export function StartChatButton({ officeId, officeTitle, officeProviderId, class
       return;
     }
 
-    try {
-      const chat = await chatApi.createChat({
-        customerId: user.id,
-        customerName: user.name,
-        officeId,
-        officeTitle,
-        officeProviderId: String(officeProviderId),
-      });
-      router.push(`/customer/chat?chatId=${chat.id}`);
-    } catch {
-      alert('Gagal memulai chat. Coba lagi.');
+    const phone = phoneNumber || '6281234567890';
+    let cleanPhone = phone.replace(/[^0-9]/g, '');
+    if (cleanPhone.startsWith('0')) {
+      cleanPhone = '62' + cleanPhone.slice(1);
     }
+    const nameStr = contactName ? ` ${contactName}` : '';
+    const message = encodeURIComponent(`Halo${nameStr}, saya tertarik dengan kantor "${officeTitle}". Apakah masih tersedia?`);
+    window.open(`https://wa.me/${cleanPhone}?text=${message}`, '_blank');
   };
 
   return (

@@ -28,14 +28,15 @@ export default function ProviderBookingsPage() {
 
   const fetchBookings = useCallback(async () => {
     if (!user?.id) return;
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
     try {
       // 1. Fetch provider offices to get their IDs
-      const officeRes = await fetch(`http://localhost:5000/api/offices?provider_id=${user.id}`);
+      const officeRes = await fetch(`${apiUrl}/offices?provider_id=${user.id}`);
       const officesData = await officeRes.json();
       const myOfficeIds = Array.isArray(officesData) ? officesData.map((o: any) => o.id) : [];
 
       // 2. Fetch all bookings and filter by provider office IDs
-      const bookingRes = await fetch('http://localhost:5000/api/bookings/all');
+      const bookingRes = await fetch(`${apiUrl}/bookings/all`);
       const allBookings = await bookingRes.json();
 
       if (Array.isArray(allBookings)) {
@@ -63,10 +64,16 @@ export default function ProviderBookingsPage() {
     }
 
     setUpdatingId(id);
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+    const token = localStorage.getItem('token');
+    const authHeaders = token ? { 'Authorization': `Bearer ${token}` } : {};
     try {
-      const res = await fetch(`http://localhost:5000/api/bookings/${id}/verify`, {
+      const res = await fetch(`${apiUrl}/bookings/${id}/verify`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          ...authHeaders
+        },
         body: JSON.stringify({ status: nextStatus }),
       });
 
@@ -136,7 +143,7 @@ export default function ProviderBookingsPage() {
                         </div>
                       </td>
                       <td className="py-4 text-muted">{b.duration}</td>
-                      <td className="py-4 font-semibold text-[#FF852D]">Rp {Number(b.price).toLocaleString('id-ID')}</td>
+                      <td className="py-4 font-semibold text-[#FF852D]">Rp {Number(b.price || (b as any).total_amount || 0).toLocaleString('id-ID')}</td>
                       <td className="py-4 opacity-70 text-xs">
                         {new Date(b.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
                       </td>

@@ -9,7 +9,8 @@ export default function CityOfficesClient({ cityName }: { cityName: string }) {
   const [offices, setOffices] = useState<OfficeSpace[]>([]);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/offices")
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+    fetch(`${apiUrl}/offices`)
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data)) {

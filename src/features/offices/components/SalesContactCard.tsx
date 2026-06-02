@@ -27,20 +27,14 @@ export default function SalesContactCard({ contact, officeId, officeTitle, offic
       alert('Hanya customer yang bisa memulai chat dengan sales.');
       return;
     }
-    if (!officeId || !officeProviderId) return;
 
-    try {
-      const chat = await chatApi.createChat({
-        customerId: user.id,
-        customerName: user.name,
-        officeId,
-        officeTitle: officeTitle || `Office #${officeId}`,
-        officeProviderId: String(officeProviderId),
-      });
-      router.push(`/customer/chat?chatId=${chat.id}`);
-    } catch {
-      alert('Gagal memulai chat.');
+    const phone = contact.phone || '6281234567890';
+    let cleanPhone = phone.replace(/[^0-9]/g, '');
+    if (cleanPhone.startsWith('0')) {
+      cleanPhone = '62' + cleanPhone.slice(1);
     }
+    const message = encodeURIComponent(`Halo ${contact.name}, saya tertarik dengan kantor "${officeTitle || 'ini'}". Apakah masih tersedia?`);
+    window.open(`https://wa.me/${cleanPhone}?text=${message}`, '_blank');
   };
 
   return (

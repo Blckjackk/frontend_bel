@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
 
 export async function DELETE(
   req: NextRequest,
@@ -8,7 +8,7 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params;
-    const res = await fetch(`${API_URL}/wishlists/${id}`, {
+    const res = await fetch(`${API_URL}/favorites/${id}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',

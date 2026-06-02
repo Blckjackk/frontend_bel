@@ -52,7 +52,8 @@ export default function BookingPage({ params }: { params: Props['params'] }) {
 
   useEffect(() => {
     if (!slug) return;
-    fetch(`http://localhost:5000/api/offices/${slug}`)
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+    fetch(`${apiUrl}/offices/${slug}`)
       .then((res) => res.json())
       .then((data) => {
         if (data && !data.error) {
@@ -92,10 +93,15 @@ export default function BookingPage({ params }: { params: Props['params'] }) {
     }
 
     setIsSubmitting(true);
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+    const token = localStorage.getItem('token');
     try {
-      const response = await fetch('http://localhost:5000/api/bookings/create', {
+      const response = await fetch(`${apiUrl}/bookings/create`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+        },
         body: JSON.stringify({
           user_id: user.id,
           office_id: office.id,

@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
 
-    const res = await fetch(`${API_URL}/wishlists/add`, {
+    const res = await fetch(`${API_URL}/favorites/add`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

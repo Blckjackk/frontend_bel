@@ -1,6 +1,6 @@
 import { DashboardBooking, DashboardUser } from '../types/dashboard.types';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
 
 async function fetchApi<T>(endpoint: string): Promise<T> {
   const res = await fetch(`${API_URL}${endpoint}`);

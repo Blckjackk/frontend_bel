@@ -23,7 +23,8 @@ export default function OfficeSpaceDetailPage() {
 
   useEffect(() => {
     if (!slug) return;
-    fetch(`http://localhost:5000/api/offices/${slug}`)
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+    fetch(`${apiUrl}/offices/${slug}`)
       .then((res) => res.json())
       .then((data) => {
         if (data && !data.error) {
@@ -213,6 +214,8 @@ export default function OfficeSpaceDetailPage() {
                         officeId={office.id}
                         officeTitle={office.title}
                         officeProviderId={office.providerId}
+                        phoneNumber={office.salesContacts?.[0]?.phone}
+                        contactName={office.salesContacts?.[0]?.name}
                       />
                     )}
                   </>

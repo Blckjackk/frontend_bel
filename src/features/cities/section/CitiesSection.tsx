@@ -12,7 +12,8 @@ export default function CitiesSection() {
   const [citiesList, setCitiesList] = useState<any[]>([]);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/cities")
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+    fetch(`${apiUrl}/cities`)
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data)) setCitiesList(data);

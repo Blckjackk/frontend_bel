@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function CityDetailPage({ params }: Props){
   const { slug } = await params;
-  const city = cities.find((c) => c.slug === slug);
+  const city = cities.find((c) => c.slug.toLowerCase() === decodeURIComponent(slug).toLowerCase());
   if (!city) return notFound();
 
     return(

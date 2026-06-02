@@ -20,8 +20,9 @@ export default function WishlistPage() {
 
   const fetchWishlists = useCallback(async () => {
     if (!user?.id) return;
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
     try {
-      const res = await fetch(`http://localhost:5000/api/favorites/user/${user.id}`);
+      const res = await fetch(`${apiUrl}/favorites/user/${user.id}`);
       if (!res.ok) {
         throw new Error('Failed to fetch wishlists');
       }
@@ -39,8 +40,9 @@ export default function WishlistPage() {
   }, [user?.id, fetchWishlists]);
 
   const handleRemove = async (id: number) => {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
     try {
-      const res = await fetch(`http://localhost:5000/api/favorites/${id}`, { method: 'DELETE' });
+      const res = await fetch(`${apiUrl}/favorites/${id}`, { method: 'DELETE' });
       if (!res.ok) {
         throw new Error('Failed to remove wishlist');
       }

@@ -27,8 +27,12 @@ export default function CustomerBookings() {
 
   const fetchBookings = useCallback(async () => {
     if (!user?.id) return;
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+    const token = localStorage.getItem('token');
     try {
-      const response = await fetch(`http://localhost:5000/api/bookings/user/${user.id}`);
+      const response = await fetch(`${apiUrl}/bookings/user/${user.id}`, {
+        headers: token ? { 'Authorization': `Bearer ${token}` } : {},
+      });
       const data = await response.json();
       setBookings(Array.isArray(data) ? data : []);
     } catch (error) {
@@ -51,6 +55,10 @@ export default function CustomerBookings() {
     const formData = new FormData();
     formData.append('file', file);
 
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+    const token = localStorage.getItem('token');
+    const authHeaders = token ? { 'Authorization': `Bearer ${token}` } : {};
+
     try {
       // 1. Upload proof file via client uploads route
       const uploadRes = await fetch('/api/upload/image', {
@@ -67,9 +75,12 @@ export default function CustomerBookings() {
       const imageUrl = uploadData.url;
 
       // 2. Submit payment proof path to Koa server
-      const paymentRes = await fetch(`http://localhost:5000/api/bookings/${bookingId}/payment`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+      const paymentRes = await fetch(`${apiUrl}/bookings/${bookingId}/payment`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          ...authHeaders
+        },
         body: JSON.stringify({
           payment_proof: imageUrl,
           payment_method: 'Bank Transfer'
@@ -234,7 +245,7 @@ export default function CustomerBookings() {
                     <div className="flex items-center justify-between border-t border-hairline pt-4 mt-2">
                       <p className="font-semibold text-ink">Total Tagihan</p>
                       <p className="font-bold text-xl text-[#0D903A]">
-                        Rp {Number(booking.price).toLocaleString('id-ID')}
+                        Rp {Number(booking.price || (booking as any).total_amount || 0).toLocaleString('id-ID')}
                       </p>
                     </div>
                   </div>

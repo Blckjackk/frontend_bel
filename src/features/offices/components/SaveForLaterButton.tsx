@@ -19,10 +19,12 @@ export default function SaveForLaterButton({ officeId, officeTitle, officeSlug, 
   const [loading, setLoading] = useState(false);
   const [favoriteId, setFavoriteId] = useState<number | null>(null);
 
+  const getApiUrl = () => process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+
   // Check if already saved
   useEffect(() => {
     if (!user) return;
-    fetch(`http://localhost:5000/api/favorites/user/${user.id}`)
+    fetch(`${getApiUrl()}/favorites/user/${user.id}`)
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data)) {
@@ -42,10 +44,11 @@ export default function SaveForLaterButton({ officeId, officeTitle, officeSlug, 
       return;
     }
     setLoading(true);
+    const apiUrl = getApiUrl();
     try {
       if (saved && favoriteId) {
         // Toggle off if already saved
-        const res = await fetch(`http://localhost:5000/api/favorites/${favoriteId}`, {
+        const res = await fetch(`${apiUrl}/favorites/${favoriteId}`, {
           method: 'DELETE'
         });
         if (res.ok) {
@@ -54,7 +57,7 @@ export default function SaveForLaterButton({ officeId, officeTitle, officeSlug, 
         }
       } else {
         // Save to favorites
-        const res = await fetch('http://localhost:5000/api/favorites/add', {
+        const res = await fetch(`${apiUrl}/favorites/add`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({

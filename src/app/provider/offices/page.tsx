@@ -44,14 +44,15 @@ export default function ProviderOfficesPage() {
 
   const fetchProviderData = useCallback(async () => {
     if (!providerId) return;
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
     try {
       // 1. Fetch cities
-      const cityRes = await fetch("http://localhost:5000/api/cities");
+      const cityRes = await fetch(`${apiUrl}/cities`);
       const citiesData = await cityRes.json();
       if (Array.isArray(citiesData)) setCitiesList(citiesData);
 
       // 2. Fetch offices for this provider
-      const officeRes = await fetch(`http://localhost:5000/api/offices?provider_id=${providerId}`);
+      const officeRes = await fetch(`${apiUrl}/offices?provider_id=${providerId}`);
       const officesData = await officeRes.json();
       if (Array.isArray(officesData)) {
         setOffices(officesData.map(mapOfficeDtoToOfficeSpace));
@@ -260,17 +261,27 @@ export default function ProviderOfficesPage() {
           : [],
       };
 
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+      const token = localStorage.getItem('token');
+      const authHeaders = token ? { 'Authorization': `Bearer ${token}` } : {};
+
       let response;
       if (editing) {
-        response = await fetch(`http://localhost:5000/api/offices/${editing.id}`, {
+        response = await fetch(`${apiUrl}/offices/${editing.id}`, {
           method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 
+            'Content-Type': 'application/json',
+            ...authHeaders
+          },
           body: JSON.stringify(payload),
         });
       } else {
-        response = await fetch('http://localhost:5000/api/offices', {
+        response = await fetch(`${apiUrl}/offices`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 
+            'Content-Type': 'application/json',
+            ...authHeaders
+          },
           body: JSON.stringify(payload),
         });
       }
@@ -280,7 +291,9 @@ export default function ProviderOfficesPage() {
         fetchProviderData();
         closeModal();
       } else {
-        alert('Gagal menyimpan data kantor.');
+        const errorData = await response.json();
+        console.error('Save error:', errorData);
+        alert(errorData.message || 'Gagal menyimpan data kantor.');
       }
     } catch (err) {
       console.error(err);
@@ -291,9 +304,13 @@ export default function ProviderOfficesPage() {
   };
 
   const handleToggleFullyBooked = async (office: OfficeSpace) => {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+    const token = localStorage.getItem('token');
+    const authHeaders = token ? { 'Authorization': `Bearer ${token}` } : {};
     try {
-      const res = await fetch(`http://localhost:5000/api/offices/${office.id}/fully-booked`, {
+      const res = await fetch(`${apiUrl}/offices/${office.id}/fully-booked`, {
         method: 'PATCH',
+        headers: authHeaders,
       });
       if (res.ok) {
         fetchProviderData();
@@ -309,9 +326,14 @@ export default function ProviderOfficesPage() {
     const ok = confirm('Hapus kantor ini secara permanen dari database?');
     if (!ok) return;
 
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+    const token = localStorage.getItem('token');
+    const authHeaders = token ? { 'Authorization': `Bearer ${token}` } : {};
+
     try {
-      const res = await fetch(`http://localhost:5000/api/offices/${officeId}`, {
+      const res = await fetch(`${apiUrl}/offices/${officeId}`, {
         method: 'DELETE',
+        headers: authHeaders,
       });
       if (res.ok) {
         alert('Kantor berhasil dihapus!');

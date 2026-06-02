@@ -1,9 +1,9 @@
 import { LoginRequest, RegisterRequest, AuthResponse, User } from '../types/auth.types';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
 
 const SERVER_DOWN_MSG =
-  'Server backend tidak berjalan. Jalankan: npm run dev:server';
+  'Server backend tidak berjalan. Jalankan: php artisan serve';
 
 async function parseAuthResponse(res: Response): Promise<AuthResponse> {
   if (!res.ok) {
